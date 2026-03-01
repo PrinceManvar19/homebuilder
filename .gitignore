@@ -1,0 +1,9 @@
+venv/
+pycache/
+*.pyc
+__pycache__/
+database.db
+.env
+*.db
+.DS_Store
+static/uploads/

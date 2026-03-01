@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Construction - Home Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-dark: #020617;
+            --accent: #d4a853;
+            --accent-hover: #b8942e;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-white: #f8fafc;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --gradient-accent: linear-gradient(135deg, #d4a853 0%, #f0d78c 100%);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --radius-lg: 20px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: var(--primary);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-white);
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent);
+        }
+        
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 60vh;
+            min-height: 450px;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&h=800&fit=crop') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 80px;
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.85) 100%);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 24px;
+            max-width: 800px;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            margin-bottom: 20px;
+        }
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: 3.2rem;
+            color: var(--text-white);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.85);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+        
+        /* Overview Section */
+        .overview-section {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 50px;
+        }
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-title i {
+            color: var(--accent);
+        }
+        .overview-text {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+        
+        /* Features Grid */
+        .features-section {
+            margin-bottom: 50px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .feature-icon {
+            width: 65px;
+            height: 65px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+        .feature-card h3 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        
+        /* Process Steps */
+        .process-section {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 50px;
+        }
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            margin-top: 35px;
+        }
+        .process-step {
+            text-align: center;
+        }
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            color: var(--primary);
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+        }
+        .process-step h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .process-step p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        /* Benefits Section */
+        .benefits-section {
+            margin-bottom: 50px;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-white);
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .benefit-item i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        .benefit-item span {
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--primary);
+            border-radius: var(--radius-lg);
+            padding: 60px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .cta-section h2 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--text-white);
+            margin-bottom: 15px;
+        }
+        .cta-section p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 40px;
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 168, 83, 0.4);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--primary-dark);
+            padding: 50px 24px 25px;
+            text-align: center;
+        }
+        .footer p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .nav-links { display: none; }
+            .overview-section, .process-section { padding: 30px; }
+            .cta-section { padding: 40px 25px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                <span>Home<span style="color:var(--accent)">Builder</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/#services">Services</a></li>
+                <li><a href="/projects">Projects</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-badge">Our Services</span>
+            <h1>New Construction</h1>
+            <p>Building custom homes from foundation to finishing. Quality craftsmanship meets modern design.</p>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <!-- Overview -->
+        <div class="overview-section">
+            <h2 class="section-title">
+                <i class="fas fa-home"></i>
+                About Our New Construction
+            </h2>
+            <p class="overview-text">
+                Our new construction service brings your dream home to life with meticulous attention to detail and superior craftsmanship. From the initial design consultation to the final walkthrough, we work closely with you to create a home that reflects your unique style, meets your family's needs, and stands the test of time.
+            </p>
+            <p class="overview-text">
+                Whether you're looking for a custom-built luxury estate, a modern family home, or a sustainable eco-friendly dwelling, our experienced team has the expertise to deliver exceptional results. We use only the highest quality materials and employ proven construction techniques to ensure your new home is built to last generations.
+            </p>
+        </div>
+
+        <!-- Key Features -->
+        <div class="features-section">
+            <h2 class="section-title">
+                <i class="fas fa-star"></i>
+                What We Offer
+            </h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <h3>Custom Home Builds</h3>
+                    <p>Every home is uniquely designed to match your vision, preferences, and lifestyle requirements.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>Turnkey Projects</h3>
+                    <p>Complete end-to-end service handling everything from design to move-in ready delivery.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Modern Architecture</h3>
+                    <p>Contemporary designs featuring open floor plans, clean lines, and innovative layouts.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Sustainable Materials</h3>
+                    <p>Eco-friendly building materials and practices that reduce environmental impact.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Smart Home Integration</h3>
+                    <p>Cutting-edge automation systems for lighting, security, climate, and entertainment.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Quality Assurance</h3>
+                    <p>Rigorous inspection processes and warranties ensure your peace of mind.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Process Steps -->
+        <div class="process-section">
+            <h2 class="section-title">
+                <i class="fas fa-tasks"></i>
+                Our Building Process
+            </h2>
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h4>Consultation</h4>
+                    <p>We discuss your vision, budget, and timeline to plan your perfect home.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h4>Design</h4>
+                    <p>Our architects create detailed plans and 3D renderings for your approval.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h4>Construction</h4>
+                    <p>Expert builders bring your plans to life with regular progress updates.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h4>Final Walkthrough</h4>
+                    <p>We ensure everything meets our high standards before handing over your keys.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="benefits-section">
+            <h2 class="section-title">
+                <i class="fas fa-check-circle"></i>
+                Why Choose Us
+            </h2>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <i class="fas fa-check"></i>
+                    <span>20+ Years Experience</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check"></i>
+                    <span>500+ Homes Built</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check"></i>
+                    <span>Fully Licensed & Insured</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check"></i>
+                    <span>Transparent Pricing</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check"></i>
+                    <span>10-Year Warranty</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check"></i>
+                    <span>Expert Project Managers</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Ready to Build Your Dream Home?</h2>
+            <p>Get in touch with our team for a free consultation and quote.</p>
+            <a href="/#contact" class="cta-button">
+                Get Free Quote
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Home Builder. All rights reserved.</p>
+    </footer>
+</body>
+</html>

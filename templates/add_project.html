@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Project - Home Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-dark: #020617;
+            --accent: #d4a853;
+            --accent-hover: #b8942e;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-white: #f8fafc;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --gradient-accent: linear-gradient(135deg, #d4a853 0%, #f0d78c 100%);
+            --shadow-md: 0 4px 30px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); background: var(--bg-light); min-height: 100vh; display: flex; flex-direction: column; }
+        .admin-header { background: var(--primary); padding: 20px 0; color: var(--text-white); }
+        .admin-header .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text-white); text-decoration: none; }
+        .logo-icon { width: 45px; height: 45px; background: var(--gradient-accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; }
+        .logo-accent { color: var(--accent); }
+        .back-link { color: var(--text-white); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: var(--transition); }
+        .back-link:hover { color: var(--accent); }
+        .admin-container { max-width: 700px; margin: 60px auto; padding: 0 24px; flex: 1; }
+        .admin-card { background: var(--bg-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: 50px; }
+        .admin-card h1 { font-family: var(--font-heading); font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        .admin-card .subtitle { color: var(--text-light); margin-bottom: 40px; }
+        .form-section { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid #e2e8f0; }
+        .form-section:last-of-type { border-bottom: none; margin-bottom: 30px; }
+        .form-section-title { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .form-section-title i { color: var(--accent); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 10px; font-size: 0.95rem; }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group textarea { width: 100%; padding: 16px 20px; background: var(--bg-light); border: 2px solid transparent; border-radius: var(--radius-md); font-family: var(--font-body); font-size: 1rem; color: var(--text-dark); transition: var(--transition); }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); background: var(--bg-white); box-shadow: 0 0 0 4px rgba(212, 168, 83, 0.1); }
+        .form-group select { width: 100%; padding: 16px 20px; background: var(--bg-light); border: 2px solid transparent; border-radius: var(--radius-md); font-family: var(--font-body); font-size: 1rem; color: var(--text-dark); transition: var(--transition); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+        .form-group textarea { resize: vertical; min-height: 140px; }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-light); }
+        .form-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 8px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+        .file-input-wrapper { position: relative; }
+        .file-input-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .file-input-display { padding: 16px 20px; background: var(--bg-white); border: 2px solid #e2e8f0; border-radius: var(--radius-md); color: var(--text-light); display: flex; align-items: center; gap: 10px; transition: var(--transition); }
+        .file-input-wrapper:hover .file-input-display { border-color: var(--accent); }
+        .file-input-display i { color: var(--accent); }
+        .btn-submit { width: 100%; padding: 18px; background: var(--accent); color: var(--primary); font-weight: 600; font-size: 1.1rem; border: none; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-submit:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212, 168, 83, 0.4); }
+        .admin-footer { background: var(--primary); padding: 20px 0; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; }
+        @media (max-width: 768px) { .admin-card { padding: 30px 20px; } .admin-card h1 { font-size: 1.6rem; } }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                <span class="logo-text">Home<span class="logo-accent">Builder</span></span>
+            </a>
+            <a href="/dashboard" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-card">
+            <h1>Add New Project</h1>
+            <p class="subtitle">Fill in the details below to add a new project</p>
+            
+            <form method="POST" action="/add-project" enctype="multipart/form-data">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-info-circle"></i> Basic Information
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="title">Project Title *</label>
+                        <input type="text" id="title" name="title" placeholder="Enter project title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Project Description *</label>
+                        <textarea id="description" name="description" placeholder="Describe the project..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-ruler-combined"></i> Project Details
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bedrooms">Bedrooms</label>
+                            <input type="number" id="bedrooms" name="bedrooms" min="0" placeholder="e.g., 4">
+                        </div>
+                        <div class="form-group">
+                            <label for="bathrooms">Bathrooms</label>
+                            <input type="number" id="bathrooms" name="bathrooms" min="0" placeholder="e.g., 3">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="garage">Garage</label>
+                            <input type="number" id="garage" name="garage" min="0" placeholder="e.g., 2">
+                        </div>
+                        <div class="form-group">
+                            <label for="floors">Floors</label>
+                            <input type="number" id="floors" name="floors" min="0" placeholder="e.g., 2">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="area_size">Area Size</label>
+                        <input type="text" id="area_size" name="area_size" placeholder="e.g., 180 m²">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Sydney, NSW">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-image"></i> Main Image (Required) - File Upload Only
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Image *</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="main_image" name="main_image" accept=".jpg,.jpeg,.png,.webp" required>
+                            <div class="file-input-display">
+                                <i class="fas fa-image"></i>
+                                <span id="main_image_name">Click or drag to upload image (jpg, png, webp)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-images"></i> Gallery Images (Optional) - Max 9 Images
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Gallery Images (Max 9)</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="gallery_images" name="gallery_images" accept=".jpg,.jpeg,.png,.webp" multiple>
+                            <div class="file-input-display">
+                                <i class="fas fa-images"></i>
+                                <span id="gallery_images_name">Click or drag to upload multiple images</span>
+                            </div>
+                        </div>
+                        <p class="form-hint">You can select up to 9 additional images for the project gallery.</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-video"></i> Video (Optional)
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Video File (mp4, webm, mov)</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="video_file" name="video_file" accept=".mp4,.webm,.mov">
+                            <div class="file-input-display">
+                                <i class="fas fa-video"></i>
+                                <span id="video_file_name">Click or drag to upload video</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="video_url">Or Video URL (YouTube/Vimeo)</label>
+                        <input type="text" id="video_url" name="video_url" placeholder="https://youtube.com/watch?v=...">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <span>Add Project</span>
+                    <i class="fas fa-plus"></i>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2024 Home Builder. Admin Panel</p>
+    </footer>
+
+    <script>
+        document.getElementById('main_image').addEventListener('change', function(e) {
+            document.getElementById('main_image_name').textContent = e.target.files[0] ? e.target.files[0].name : 'Click or drag to upload image';
+        });
+        document.getElementById('video_file').addEventListener('change', function(e) {
+            document.getElementById('video_file_name').textContent = e.target.files[0] ? e.target.files[0].name : 'Click or drag to upload video';
+        });
+        document.getElementById('gallery_images').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                document.getElementById('gallery_images_name').textContent = files.length + ' image(s) selected';
+            } else {
+                document.getElementById('gallery_images_name').textContent = 'Click or drag to upload multiple images';
+            }
+        });
+    </script>
+</body>
+</html>

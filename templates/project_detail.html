@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.title }} - Home Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #d4a853;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-white: #f8fafc;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --radius-lg: 20px;
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+        .navbar {
+            background: var(--primary);
+            padding: 20px 0;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-white);
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent), #f0d78c);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        .back-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover { color: var(--accent); }
+        .project-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 24px;
+        }
+        .project-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        .project-image {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+        .project-content {
+            padding: 40px;
+        }
+        .project-category {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--primary);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .project-title {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+        .project-description {
+            color: var(--text-light);
+            line-height: 1.9;
+            font-size: 1.05rem;
+        }
+        
+        /* Project Information Grid */
+        .project-info-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f1f5f9;
+            border-radius: 12px;
+        }
+        .project-info-title {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .project-info-title i {
+            color: var(--accent);
+        }
+        .project-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .info-item i {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+        .info-item .info-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-item .info-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-item .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .project-image { height: 250px; }
+            .project-content { padding: 25px; }
+            .project-title { font-size: 1.6rem; }
+            .project-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .project-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Video Section */
+        .video-section {
+            margin: 30px 0;
+        }
+        .video-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .video-title i {
+            color: var(--accent);
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+        }
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-container video {
+            object-fit: contain;
+        }
+        
+        /* Gallery Section */
+        .gallery-section {
+            margin-top: 40px;
+        }
+        .gallery-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .gallery-item {
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Lightbox Modal */
+        .lightbox {
+            position: fixed;
+            display: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .lightbox .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            z-index: 10000;
+        }
+        
+        .lightbox .close:hover {
+            color: var(--accent);
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 30px;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-back:hover {
+            background: #1e293b;
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                <span>Home<span style="color:var(--accent)">Builder</span></span>
+            </a>
+            <a href="/projects" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </a>
+        </div>
+    </nav>
+
+    <div class="project-container">
+        <div class="project-card">
+            {% if project.main_image %}
+            <img src="{{ url_for('static', filename='uploads/images/' + project.main_image) }}" alt="{{ project.title }}" class="project-image">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1000&h=450&fit=crop" alt="No Image" class="project-image">
+            {% endif %}
+            
+            <div class="project-content">
+                <span class="project-category">{{ project.category }} Project</span>
+                <h1 class="project-title">{{ project.title }}</h1>
+                <p class="project-description">{{ project.description }}</p>
+                
+                {% if project.bedrooms or project.bathrooms or project.garage or project.area_size or project.floors or project.location %}
+                <div class="project-info-section">
+                    <h3 class="project-info-title">
+                        <i class="fas fa-info-circle"></i>
+                        Project Information
+                    </h3>
+                    <div class="project-info-grid">
+                        {% if project.bedrooms %}
+                        <div class="info-item">
+                            <i class="fas fa-bed"></i>
+                            <div class="info-content">
+                                <span class="info-label">Bedrooms</span>
+                                <span class="info-value">{{ project.bedrooms }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.bathrooms %}
+                        <div class="info-item">
+                            <i class="fas fa-bath"></i>
+                            <div class="info-content">
+                                <span class="info-label">Bathrooms</span>
+                                <span class="info-value">{{ project.bathrooms }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.garage %}
+                        <div class="info-item">
+                            <i class="fas fa-car"></i>
+                            <div class="info-content">
+                                <span class="info-label">Garage</span>
+                                <span class="info-value">{{ project.garage }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.area_size %}
+                        <div class="info-item">
+                            <i class="fas fa-ruler-combined"></i>
+                            <div class="info-content">
+                                <span class="info-label">Area</span>
+                                <span class="info-value">{{ project.area_size }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.floors %}
+                        <div class="info-item">
+                            <i class="fas fa-building"></i>
+                            <div class="info-content">
+                                <span class="info-label">Floors</span>
+                                <span class="info-value">{{ project.floors }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.location %}
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="info-content">
+                                <span class="info-label">Location</span>
+                                <span class="info-value">{{ project.location }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if project.video_file or project.video_url %}
+                <div class="video-section">
+                    <h3 class="video-title">
+                        <i class="fas fa-video"></i>
+                        Project Video
+                    </h3>
+                    <div class="video-container">
+                        {% if project.video_file %}
+                        <video controls>
+                            <source src="{{ url_for('static', filename='uploads/videos/' + project.video_file) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        {% elif project.video_url %}
+                            {% if 'youtube.com' in project.video_url or 'youtu.be' in project.video_url %}
+                                {% if 'v=' in project.video_url %}
+                                {% set video_id = project.video_url.split('v=')[1] %}
+                                {% if '&' in video_id %}{% set video_id = video_id.split('&')[0] %}{% endif %}
+                                <iframe src="https://www.youtube.com/embed/{{ video_id }}" allowfullscreen></iframe>
+                                {% elif '/' in project.video_url %}
+                                <iframe src="https://www.youtube.com/embed/{{ project.video_url.split('/')[-1] }}" allowfullscreen></iframe>
+                                {% endif %}
+                            {% elif 'vimeo.com' in project.video_url %}
+                            <iframe src="https://player.vimeo.com/video/{{ project.video_url.split('/')[-1] }}" allowfullscreen></iframe>
+                            {% else %}
+                            <iframe src="{{ project.video_url }}" allowfullscreen></iframe>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if images %}
+                <div class="gallery-section">
+                    <h3 class="gallery-title">Project Gallery</h3>
+                    <div class="gallery-grid">
+                        {% for img in images %}
+                        <div class="gallery-item">
+                            <img src="{{ url_for('static', filename='uploads/images/' + img.image_name) }}" alt="Project image {{ loop.index }}" class="gallery-img">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <a href="/projects" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> View All Projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <span class="close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <script>
+        // Lightbox functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const closeBtn = document.querySelector('.lightbox .close');
+            const galleryImages = document.querySelectorAll('.gallery-img');
+            
+            // Open lightbox when clicking gallery images
+            galleryImages.forEach(img => {
+                img.addEventListener('click', function() {
+                    lightbox.classList.add('active');
+                    lightboxImg.src = this.src;
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            // Close lightbox when clicking X button
+            closeBtn.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Close lightbox when clicking outside the image
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close lightbox when pressing ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

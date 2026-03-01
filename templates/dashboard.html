@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Home Builder Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #d4a853;
+            --accent-hover: #b8942e;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-white: #f8fafc;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --danger: #dc2626;
+            --success: #22c55e;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+        .dashboard-header {
+            background: var(--primary);
+            padding: 20px 0;
+            color: var(--text-white);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-white);
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent), #f0d78c);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        .header-nav a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .header-nav a:hover { color: var(--accent); }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-info span {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .btn-logout {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .btn-logout:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .page-header h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-add:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .projects-table {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: var(--primary);
+            color: var(--text-white);
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--text-dark);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+        .project-thumb {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .category-new { background: #dcfce7; color: #16a34a; }
+        .category-past { background: #dbeafe; color: #2563eb; }
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-view, .btn-delete {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-view {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-view:hover { background: #1e293b; }
+        .btn-delete {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+        .btn-delete:hover { background: #fecaca; }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+        }
+        .alert {
+            padding: 14px 18px;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                <span>Home<span style="color:var(--accent)">Builder</span></span>
+            </a>
+            <nav class="header-nav">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/add-project">Add Project</a>
+                <a href="/">View Site</a>
+            </nav>
+            <div class="user-info">
+                <span>Welcome, {{ username }}</span>
+                <a href="/logout" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="page-header">
+            <h1>Project Management</h1>
+            <a href="/add-project" class="btn-add">
+                <i class="fas fa-plus"></i> Add Project
+            </a>
+        </div>
+
+        <div class="projects-table">
+            {% if projects %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td>#{{ project.id }}</td>
+                        <td>
+                            {% if project.image %}
+                            <img src="{{ project.image }}" alt="{{ project.title }}" class="project-thumb">
+                            {% else %}
+                            <img src="https://via.placeholder.com/80x60" alt="No Image" class="project-thumb">
+                            {% endif %}
+                        </td>
+                        <td>{{ project.title }}</td>
+                        <td>
+                            <span class="category-badge category-{{ project.category }}">{{ project.category }}</span>
+                        </td>
+                        <td>{{ project.created_at }}</td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="/project/{{ project.id }}" class="btn-view">View</a>
+                                <a href="/delete-project/{{ project.id }}" class="btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>No projects yet. Click "Add Project" to create one.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
