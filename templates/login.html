@@ -17,6 +17,8 @@
             --text-dark: #0f172a;
             --text-light: #64748b;
             --bg-light: #f8fafc;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
             --radius-md: 12px;
             --radius-lg: 20px;
             --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -46,7 +48,7 @@
         }
         .login-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .login-header .logo {
             display: inline-flex;
@@ -78,6 +80,44 @@
         .login-header p {
             color: var(--text-light);
             font-size: 0.95rem;
+        }
+        .credentials-box {
+            background: var(--success-bg);
+            border: 2px solid #bbf7d0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .credentials-box .icon {
+            font-size: 1.8rem;
+            color: var(--success-text);
+            margin-bottom: 12px;
+        }
+        .credentials-box h3 {
+            color: var(--success-text);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+        }
+        .credentials-box .creds {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 8px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        .credentials-box .warning {
+            font-size: 0.85rem;
+            color: #92400e;
+            background: #fef3c7;
+            padding: 8px;
+            border-radius: 6px;
+            border-left: 4px solid #f59e0b;
         }
         .form-group {
             margin-bottom: 20px;
@@ -147,33 +187,35 @@
             <div class="login-header">
                 <a href="/" class="logo">
                     <span class="logo-icon"><i class="fas fa-cube"></i></span>
-                    <span>Home<span style="color: var(--accent)">Builder</span></span>
+                    <span>Home<span style="color: var(--accent)">Builder</span>
                 </a>
                 <h1>Admin Login</h1>
                 <p>Enter your credentials to access dashboard</p>
             </div>
             
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+            <div class="credentials-box">
+                <div class="icon">📋</div>
+                <h3>Default Admin Credentials</h3>
+                <div class="creds">
+                    <strong>Username:</strong> Admin<br>
+                    <strong>Password:</strong> Admin@123
+                </div>
+                <div class="warning">
+                    ⚠️ For local development only. Change password in production!
+                </div>
             
             <form method="POST" action="/login">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter username" required>
+                    <input type="text" id="username" name="username" placeholder="Enter username" value="Admin" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter password" value="Admin@123" required>
                 </div>
                 <button type="submit" class="btn-login">Sign In</button>
             </form>
             <a href="/" class="back-link">← Back to Home</a>
         </div>
-    </div>
 </body>
 </html>

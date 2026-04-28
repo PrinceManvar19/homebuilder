@@ -225,6 +225,7 @@
             <nav class="header-nav">
                 <a href="/dashboard">Dashboard</a>
                 <a href="/add-project">Add Project</a>
+                <a href="/admin/leads">Leads</a>
                 <a href="/">View Site</a>
             </nav>
             <div class="user-info">
@@ -268,12 +269,13 @@
                     <tr>
                         <td>#{{ project.id }}</td>
                         <td>
-                            {% if project.image %}
-                            <img src="{{ project.image }}" alt="{{ project.title }}" class="project-thumb">
+                            {% if project.main_image %}
+                            <img src="{{ url_for('static', filename='uploads/images/' + project.main_image) }}" alt="{{ project.title }}" class="project-thumb">
                             {% else %}
                             <img src="https://via.placeholder.com/80x60" alt="No Image" class="project-thumb">
                             {% endif %}
                         </td>
+
                         <td>{{ project.title }}</td>
                         <td>
                             <span class="category-badge category-{{ project.category }}">{{ project.category }}</span>

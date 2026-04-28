@@ -1,10 +1,3 @@
-/* ========================================
-   Home Builder - Premium CSS
-   Modern, Animated, Responsive Design
-   Dark Blue + Gold Premium Theme
-   ======================================== */
-
-/* CSS Variables */
 :root {
     --primary: #0f172a;
     --primary-dark: #020617;
@@ -33,7 +26,6 @@
     --radius-xl: 30px;
 }
 
-/* Reset */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -83,9 +75,6 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary);
 }
 
-/* ========================================
-   Navigation
-   ======================================== */
 .navbar {
     position: fixed;
     top: 0;
@@ -238,9 +227,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* ========================================
-   Hero Section
-   ======================================== */
 .hero {
     position: relative;
     min-height: 100vh;
@@ -458,9 +444,6 @@ h1, h2, h3, h4, h5, h6 {
     animation: scroll 1.5s infinite;
 }
 
-/* ========================================
-   Section Styles
-   ======================================== */
 section {
     padding: 120px 0;
     overflow: hidden;
@@ -497,9 +480,6 @@ section {
     line-height: 1.8;
 }
 
-/* ========================================
-   Services Section
-   ======================================== */
 .services {
     background: var(--bg-light);
 }
@@ -607,9 +587,6 @@ section {
     color: rgba(15, 23, 42, 0.05);
 }
 
-/* ========================================
-   Projects Section
-   ======================================== */
 .projects {
     background: var(--bg-white);
 }
@@ -709,9 +686,6 @@ section {
     margin-top: 50px;
 }
 
-/* ========================================
-   Why Choose Us Section
-   ======================================== */
 .why-choose {
     background: var(--bg-light);
 }
@@ -804,9 +778,6 @@ section {
     font-size: 0.9rem;
 }
 
-/* ========================================
-   Stats Section
-   ======================================== */
 .stats {
     position: relative;
     padding: 100px 0;
@@ -872,9 +843,6 @@ section {
     margin-top: 10px;
 }
 
-/* ========================================
-   Contact Section
-   ======================================== */
 .contact {
     background: var(--bg-white);
 }
@@ -1015,9 +983,6 @@ section {
     padding: 18px;
 }
 
-/* ========================================
-   Footer
-   ======================================== */
 .footer {
     background: var(--primary);
     color: var(--text-white);
@@ -1144,9 +1109,6 @@ section {
     font-size: 0.9rem;
 }
 
-/* ========================================
-   Animations
-   ======================================== */
 @keyframes fadeInDown {
     from {
         opacity: 0;
@@ -1192,7 +1154,6 @@ section {
     }
 }
 
-/* Scroll Reveal Animation Classes */
 .reveal {
     opacity: 0;
     transform: translateY(40px);
@@ -1204,9 +1165,6 @@ section {
     transform: translateY(0);
 }
 
-/* ========================================
-   Responsive Design
-   ======================================== */
 @media (max-width: 1200px) {
     .hero-title {
         font-size: 4rem;

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import sqlite3
 from functools import wraps
 import bcrypt
@@ -8,13 +8,11 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = 'home_builder_secret_key_2024'
 
-# Configuration - Image upload only
 UPLOAD_FOLDER = 'static/uploads/images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Create upload folders if not exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs('static/uploads/videos', exist_ok=True)
 
@@ -22,7 +20,6 @@ def init_db():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     
-    # Create admin table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS admin (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +28,6 @@ def init_db():
         )
     ''')
     
-    # Create projects table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS projects (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +47,6 @@ def init_db():
         )
     ''')
     
-    # Create project_images table for gallery images
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS project_images (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +56,6 @@ def init_db():
         )
     ''')
     
-    # Create leads table (for quote form submissions)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS leads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,13 +67,24 @@ def init_db():
         )
     ''')
     
-    # Create default admin user
     cursor.execute('SELECT * FROM admin WHERE username = ?', ('Admin',))
     if not cursor.fetchone():
         hashed_password = bcrypt.hashpw('Admin@123'.encode('utf-8'), bcrypt.gensalt())
         cursor.execute('INSERT INTO admin (username, password) VALUES (?, ?)', 
                       ('Admin', hashed_password))
         print("Default admin user created: Admin / Admin@123")
+    
+    cursor.execute('SELECT COUNT(*) FROM leads')
+    if cursor.fetchone()[0] == 0:
+        default_leads = [
+            ('John Smith', 'john.smith@email.com', '(555) 123-4567', 'Looking to build a 4-bedroom modern home on a 5000 sq ft lot. Need an estimate for the full project including landscaping.'),
+            ('Sarah Johnson', 'sarah.j@email.com', '(555) 987-6543', 'Interested in renovating our kitchen and master bathroom. Would like to schedule a consultation to discuss design options and timeline.'),
+            ('Michael Chen', 'm.chen@email.com', '(555) 456-7890', 'We are planning a commercial office building approximately 15,000 sq ft. Need architectural design and construction services.'),
+            ('Emily Rodriguez', 'emily.r@email.com', '(555) 234-5678', 'Want to add a second floor to our existing home. Looking for a reliable builder who can handle structural modifications and matching the current style.'),
+            ('David Park', 'david.park@email.com', '(555) 876-5432', 'Requesting a quote for a complete home renovation. Includes new flooring, updated electrical, plumbing, and exterior painting.')
+        ]
+        cursor.executemany('INSERT INTO leads (name, email, phone, message) VALUES (?, ?, ?, ?)', default_leads)
+        print("5 default leads added")
     
     conn.commit()
     conn.close()
@@ -97,14 +102,11 @@ def login_required(f):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# ===================== ROUTES =====================
-
 @app.route('/')
 def index():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    # Get latest 6 projects - no category filter
     cursor.execute('SELECT * FROM projects ORDER BY created_at DESC LIMIT 6')
     projects = cursor.fetchall()
     conn.close()
@@ -115,10 +117,8 @@ def projects():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    # Get Upcoming projects
     cursor.execute('SELECT * FROM projects WHERE LOWER(category) = LOWER("Upcoming") ORDER BY created_at DESC')
     upcoming_projects = cursor.fetchall()
-    # Get Completed projects
     cursor.execute('SELECT * FROM projects WHERE LOWER(category) = LOWER("Completed") ORDER BY created_at DESC')
     completed_projects = cursor.fetchall()
     conn.close()
@@ -132,7 +132,6 @@ def project_detail(id):
     cursor.execute('SELECT * FROM projects WHERE id = ?', (id,))
     project = cursor.fetchone()
     
-    # Get gallery images for this project
     images = []
     if project:
         cursor.execute('SELECT * FROM project_images WHERE project_id = ?', (id,))
@@ -144,8 +143,6 @@ def project_detail(id):
         flash('Project not found')
         return redirect('/projects')
     return render_template('project_detail.html', project=project, images=images)
-
-# ===================== SOLUTIONS PAGES =====================
 
 @app.route('/solutions/new-construction')
 def solution_new_construction():
@@ -159,19 +156,15 @@ def solution_renovation():
 def solution_design():
     return render_template('solution_design.html')
 
-# ===================== QUOTE FORM (LEADS) =====================
-
 @app.route('/submit-quote', methods=['POST'])
 def submit_quote():
-    # Get form data - use exact names from HTML
     name = request.form.get('name', '').strip()
     email = request.form.get('email', '').strip()
     phone = request.form.get('phone', '').strip()
     message = request.form.get('message', '').strip()
     
     if not name or not email or not phone:
-        flash('Please fill in all required fields.')
-        return redirect('/#contact')
+        return jsonify({'success': False, 'message': 'Please fill in all required fields.'}), 400
     
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -182,10 +175,7 @@ def submit_quote():
     conn.commit()
     conn.close()
     
-    flash('Thank you! Your quote request has been submitted. We will contact you soon.')
-    return redirect('/#contact')
-
-# ===================== ADMIN ROUTES =====================
+    return jsonify({'success': True, 'message': f'We will connect {name} soon'})
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -246,7 +236,6 @@ def add_project():
         garage = int(garage) if garage else None
         floors = int(floors) if floors else None
         
-        # Handle main image - FILE UPLOAD ONLY
         main_image = None
         image_file = request.files.get('main_image')
         
@@ -260,7 +249,6 @@ def add_project():
                 flash('Invalid image file type. Allowed: png, jpg, jpeg, webp')
                 return redirect('/add-project')
         
-        # Handle video - file or URL
         video_file = None
         video_url = None
         
@@ -285,26 +273,21 @@ def add_project():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (title, description, main_image, video_file, video_url, category, bedrooms, bathrooms, garage, area_size, floors, location))
         
-        # Get the last inserted project ID
         project_id = cursor.lastrowid
         
-        # Handle gallery images - up to 9 additional images
         gallery_images = request.files.getlist('gallery_images')
         
         if gallery_images:
-            # Limit to max 9 gallery images
             max_gallery = 9
             for i, gallery_file in enumerate(gallery_images[:max_gallery]):
                 if gallery_file and gallery_file.filename:
                     if allowed_file(gallery_file.filename):
                         filename = secure_filename(gallery_file.filename)
-                        # Add unique suffix to avoid filename conflicts
                         name, ext = os.path.splitext(filename)
                         filename = f"{name}_{project_id}_{i}{ext}"
                         image_path = os.path.join(UPLOAD_FOLDER, filename)
                         gallery_file.save(image_path)
                         
-                        # Insert into project_images table
                         cursor.execute(
                             'INSERT INTO project_images (project_id, image_name) VALUES (?, ?)',
                             (project_id, filename)
@@ -324,22 +307,18 @@ def delete_project(id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     
-    # Get project to delete associated files
     cursor.execute('SELECT main_image, video_file FROM projects WHERE id = ?', (id,))
     project = cursor.fetchone()
     if project:
-        # Delete main image file
         if project[0]:
             image_path = os.path.join(UPLOAD_FOLDER, project[0])
             if os.path.exists(image_path):
                 os.remove(image_path)
-        # Delete video file
         if project[1]:
             video_path = os.path.join('static/uploads/videos', project[1])
             if os.path.exists(video_path):
                 os.remove(video_path)
     
-    # Delete gallery images
     cursor.execute('SELECT image_name FROM project_images WHERE project_id = ?', (id,))
     gallery_images = cursor.fetchall()
     for img in gallery_images:
@@ -347,10 +326,7 @@ def delete_project(id):
         if os.path.exists(image_path):
             os.remove(image_path)
     
-    # Delete from project_images table
     cursor.execute('DELETE FROM project_images WHERE project_id = ?', (id,))
-    
-    # Delete project
     cursor.execute('DELETE FROM projects WHERE id = ?', (id,))
     conn.commit()
     conn.close()
@@ -368,5 +344,17 @@ def admin_leads():
     conn.close()
     return render_template('admin_leads.html', leads=leads, username=session.get('username'))
 
+@app.route('/admin/delete-lead/<int:id>')
+@login_required
+def delete_lead(id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM leads WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    flash('Lead deleted successfully!')
+    return redirect('/admin/leads')
+
 if __name__ == '__main__':
+
     app.run()

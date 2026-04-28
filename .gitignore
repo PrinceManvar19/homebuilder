@@ -1,6 +1,6 @@
 venv/
-pycache/
 *.pyc
+
 __pycache__/
 database.db
 .env

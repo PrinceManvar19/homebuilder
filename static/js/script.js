@@ -1,13 +1,5 @@
-/* ========================================
-   Home Builder - Premium JavaScript
-   Animations, Interactions & Effects
-   ======================================== */
-
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ========================================
-    // Mobile Navigation
-    // ========================================
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.querySelector('.nav-links');
     const navLinksItems = document.querySelectorAll('.nav-link');
@@ -19,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
         });
         
-        // Close menu when clicking a link
         navLinksItems.forEach(link => {
             link.addEventListener('click', function() {
                 hamburger.classList.remove('active');
@@ -28,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
                 hamburger.classList.remove('active');
@@ -38,9 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========================================
-    // Sticky Navbar on Scroll
-    // ========================================
     const navbar = document.getElementById('navbar');
     let lastScroll = 0;
     
@@ -56,9 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         lastScroll = currentScroll;
     });
     
-    // ========================================
-    // Smooth Scroll for Anchor Links
-    // ========================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -76,9 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ========================================
-    // Active Navigation Link on Scroll
-    // ========================================
     const sections = document.querySelectorAll('section[id]');
     
     function updateActiveNavLink() {
@@ -102,9 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.addEventListener('scroll', updateActiveNavLink);
     
-    // ========================================
-    // Scroll Reveal Animation
-    // ========================================
     const revealElements = document.querySelectorAll('[data-aos]');
     
     const revealObserver = new IntersectionObserver((entries) => {
@@ -127,9 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
         revealObserver.observe(el);
     });
     
-    // ========================================
-    // Counter Animation
-    // ========================================
     const counters = document.querySelectorAll('.counter, .stat-number[data-target]');
     
     const counterObserver = new IntersectionObserver((entries) => {
@@ -164,9 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
         counterObserver.observe(counter);
     });
     
-    // ========================================
-    // Service Card Hover Effect
-    // ========================================
     const serviceCards = document.querySelectorAll('.service-card');
     
     serviceCards.forEach(card => {
@@ -187,9 +159,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ========================================
-    // Project Card Parallax Effect
-    // ========================================
     const projectCards = document.querySelectorAll('.project-card');
     
     projectCards.forEach(card => {
@@ -212,39 +181,73 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ========================================
-    // Form Submission
-    // ========================================
+    function showToast(message, type) {
+        let toast = document.getElementById('toast-notification');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 99999;
+                transform: translateX(120%);
+                transition: transform 0.4s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                max-width: 320px;
+                line-height: 1.4;
+            `;
+            document.body.appendChild(toast);
+        }
+        toast.style.background = type === 'success' ? '#22c55e' : '#dc2626';
+        toast.textContent = message;
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateX(0)';
+        });
+        setTimeout(() => {
+            toast.style.transform = 'translateX(120%)';
+        }, 3000);
+    }
+
     const contactForm = document.querySelector('.contact-form');
     
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const submitBtn = this.querySelector('.submit-btn');
             const originalText = submitBtn.innerHTML;
             
             submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
             submitBtn.disabled = true;
             
-            // Simulate form submission
-            setTimeout(() => {
-                submitBtn.innerHTML = '<span>Message Sent!</span><i class="fas fa-check"></i>';
-                submitBtn.style.background = '#22c55e';
-                
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.style.background = '';
-                    submitBtn.disabled = false;
+            const formData = new FormData(this);
+            fetch('/submit-quote', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
                     this.reset();
-                }, 2000);
-            }, 1500);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(() => {
+                showToast('Something went wrong. Please try again.', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
         });
     }
     
-    // ========================================
-    // Newsletter Form
-    // ========================================
     const newsletterForm = document.querySelector('.newsletter-form');
     
     if (newsletterForm) {
@@ -266,9 +269,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========================================
-    // Button Ripple Effect
-    // ========================================
     const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
     
     buttons.forEach(btn => {
@@ -306,9 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ========================================
-    // Mouse Follower Effect (Optional)
-    // ========================================
     const cursorDot = document.createElement('div');
     cursorDot.className = 'cursor-dot';
     cursorDot.style.cssText = `
@@ -354,7 +351,6 @@ document.addEventListener('DOMContentLoaded', function() {
         cursorOutline.style.opacity = '1';
     });
     
-    // Smooth cursor follow
     function animateCursor() {
         outlineX += (mouseX - outlineX) * 0.15;
         outlineY += (mouseY - outlineY) * 0.15;
@@ -366,15 +362,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     animateCursor();
     
-    // Hide cursor on mouse leave
     document.addEventListener('mouseleave', function() {
         cursorDot.style.opacity = '0';
         cursorOutline.style.opacity = '0';
     });
     
-    // ========================================
-    // Page Loader
-    // ========================================
     const loader = document.createElement('div');
     loader.className = 'page-loader';
     loader.style.cssText = `
@@ -453,9 +445,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
     
-    // ========================================
-    // Add CSS for AOS animation
-    // ========================================
     const aosStyle = document.createElement('style');
     aosStyle.textContent = `
         .aos-init {
